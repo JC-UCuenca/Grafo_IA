@@ -1,0 +1,12 @@
+Padre,Hijo,Heurística,Arista
+H,A,20,1
+H,C,20,1
+A,D,14,2
+A,E,14,2
+D,K,9,3
+D,L,9,3
+C,G,16,2
+C,J,16,2
+G,B,16,3
+B,F,3,4
+L,F,6,4

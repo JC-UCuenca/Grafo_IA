@@ -1,0 +1,7 @@
+﻿Padre,Hijo,Heurística,Arista
+I,A,0,1
+I,B,0,5
+I,C,0,15
+A,M,0,10
+B,M,0,5
+C,M,0,5
