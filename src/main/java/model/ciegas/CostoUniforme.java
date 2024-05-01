@@ -51,7 +51,7 @@ public class CostoUniforme {
             cola.addAll(tempList);
 
             tabla.add(new String[]{String.join(", ", cola.stream()
-                    .map(Tupla::toString).toList()), nodoActual.getNombre()});
+                    .map(Tupla::toString).toList()), nodoActual.getNombre() + "("+pesoActual+")"});
 
             if (objetivos.isEmpty())
                 cola.clear();

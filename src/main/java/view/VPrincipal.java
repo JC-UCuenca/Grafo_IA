@@ -38,9 +38,11 @@ public class VPrincipal extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         txtInicio = new javax.swing.JTextField();
         txtFin = new javax.swing.JTextField();
+        sPanelGrafo = new javax.swing.JScrollPane();
+        panelGrafo = new javax.swing.JPanel();
         sPanelTabla = new javax.swing.JScrollPane();
         panelTabla = new javax.swing.JPanel();
-        jPanel2 = new javax.swing.JPanel();
+        panelMetodos = new javax.swing.JPanel();
         chkAmplitud = new javax.swing.JCheckBox();
         chkProfundidad = new javax.swing.JCheckBox();
         chkBidireccional = new javax.swing.JCheckBox();
@@ -49,12 +51,11 @@ public class VPrincipal extends javax.swing.JFrame {
         chkGradiente = new javax.swing.JCheckBox();
         chkPrimeroMejor = new javax.swing.JCheckBox();
         chkAEstrella = new javax.swing.JCheckBox();
-        sPanelGrafo = new javax.swing.JScrollPane();
-        panelGrafo = new javax.swing.JPanel();
         btnGraficar = new javax.swing.JButton();
         btnEjecutar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
         jLabel1.setText("Archivo CSV:");
 
@@ -65,7 +66,7 @@ public class VPrincipal extends javax.swing.JFrame {
             }
         });
 
-        lblArchivo.setText("Archivo no seleccionado");
+        lblArchivo.setText("Archivo no selecionado");
 
         jLabel3.setText("Inicio:");
 
@@ -77,15 +78,28 @@ public class VPrincipal extends javax.swing.JFrame {
             }
         });
 
+        javax.swing.GroupLayout panelGrafoLayout = new javax.swing.GroupLayout(panelGrafo);
+        panelGrafo.setLayout(panelGrafoLayout);
+        panelGrafoLayout.setHorizontalGroup(
+            panelGrafoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 437, Short.MAX_VALUE)
+        );
+        panelGrafoLayout.setVerticalGroup(
+            panelGrafoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 536, Short.MAX_VALUE)
+        );
+
+        sPanelGrafo.setViewportView(panelGrafo);
+
         javax.swing.GroupLayout panelTablaLayout = new javax.swing.GroupLayout(panelTabla);
         panelTabla.setLayout(panelTablaLayout);
         panelTablaLayout.setHorizontalGroup(
             panelTablaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 357, Short.MAX_VALUE)
+            .addGap(0, 471, Short.MAX_VALUE)
         );
         panelTablaLayout.setVerticalGroup(
             panelTablaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 208, Short.MAX_VALUE)
+            .addGap(0, 269, Short.MAX_VALUE)
         );
 
         sPanelTabla.setViewportView(panelTabla);
@@ -111,60 +125,45 @@ public class VPrincipal extends javax.swing.JFrame {
 
         chkAEstrella.setText("A*");
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        javax.swing.GroupLayout panelMetodosLayout = new javax.swing.GroupLayout(panelMetodos);
+        panelMetodos.setLayout(panelMetodosLayout);
+        panelMetodosLayout.setHorizontalGroup(
+            panelMetodosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelMetodosLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(panelMetodosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(chkAmplitud)
                     .addComponent(chkProfundidad)
                     .addComponent(chkBidireccional)
                     .addComponent(chkProIterativa))
                 .addGap(24, 24, 24)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(panelMetodosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(chkAEstrella)
                     .addComponent(chkPrimeroMejor)
                     .addComponent(chkGradiente)
                     .addComponent(chkCostoUni))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        panelMetodosLayout.setVerticalGroup(
+            panelMetodosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelMetodosLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(panelMetodosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(chkAmplitud)
                     .addComponent(chkCostoUni))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(panelMetodosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(chkProfundidad)
                     .addComponent(chkGradiente))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(panelMetodosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(chkBidireccional)
                     .addComponent(chkPrimeroMejor))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 7, Short.MAX_VALUE)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(panelMetodosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(chkProIterativa)
                     .addComponent(chkAEstrella)))
         );
-
-        //panelGrafo.setBackground(new java.awt.Color(255, 0, 51));
-
-        javax.swing.GroupLayout panelGrafoLayout = new javax.swing.GroupLayout(panelGrafo);
-        panelGrafo.setLayout(panelGrafoLayout);
-        panelGrafoLayout.setHorizontalGroup(
-            panelGrafoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 437, Short.MAX_VALUE)
-        );
-        panelGrafoLayout.setVerticalGroup(
-            panelGrafoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 487, Short.MAX_VALUE)
-        );
-
-        sPanelGrafo.setViewportView(panelGrafo);
 
         btnGraficar.setText("Graficar");
 
@@ -186,7 +185,7 @@ public class VPrincipal extends javax.swing.JFrame {
                                     .addComponent(lblArchivo)
                                     .addGroup(layout.createSequentialGroup()
                                         .addComponent(btnArchivo)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(btnGraficar))))
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -196,13 +195,13 @@ public class VPrincipal extends javax.swing.JFrame {
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(txtFin, javax.swing.GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE)
                                     .addComponent(txtInicio))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(btnEjecutar)))
-                        .addGap(26, 26, 26))
-                    .addComponent(sPanelTabla)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(panelMetodos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(sPanelTabla))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(sPanelGrafo, javax.swing.GroupLayout.PREFERRED_SIZE, 439, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(sPanelGrafo)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -211,7 +210,6 @@ public class VPrincipal extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel1)
                             .addComponent(btnArchivo)
@@ -229,9 +227,9 @@ public class VPrincipal extends javax.swing.JFrame {
                                 .addComponent(txtFin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(btnEjecutar)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(panelMetodos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(sPanelTabla, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(sPanelTabla))
                     .addComponent(sPanelGrafo))
                 .addContainerGap())
         );
@@ -302,9 +300,9 @@ public class VPrincipal extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JPanel jPanel2;
     private javax.swing.JLabel lblArchivo;
     private javax.swing.JPanel panelGrafo;
+    private javax.swing.JPanel panelMetodos;
     private javax.swing.JPanel panelTabla;
     private javax.swing.JScrollPane sPanelGrafo;
     private javax.swing.JScrollPane sPanelTabla;

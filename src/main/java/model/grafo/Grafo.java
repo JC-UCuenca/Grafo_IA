@@ -155,4 +155,118 @@ public class Grafo {
         return new AEstrella().buscar(origen, objetivos);
     }
 
+    public int obtenerNivelProfundidad(Nodo nodo) {
+        if (nodo == null) {
+            return -1; // Nodo no encontrado
+        }
+
+        Map<Nodo, Integer> niveles = new HashMap<>();
+        niveles.put(nodo, 0);
+
+        Deque<Nodo> pila = new ArrayDeque<>();
+        pila.push(nodo);
+
+        int maxProfundidad = 0;
+
+        while (!pila.isEmpty()) {
+            Nodo actual = pila.pop();
+            int nivelActual = niveles.get(actual);
+
+            maxProfundidad = Math.max(maxProfundidad, nivelActual);
+
+            for (Arista arista : actual.getAristas()) {
+                Nodo hijo = arista.getHijo();
+                if (!niveles.containsKey(hijo)) {
+                    niveles.put(hijo, nivelActual + 1);
+                    pila.push(hijo);
+                }
+            }
+        }
+
+        return maxProfundidad;
+    }
+
+    public int obtenerMaximaCantidadHijos(Nodo nodoInicial) {
+        if (nodoInicial == null) {
+            return 0;
+        }
+
+        Set<Nodo> visitados = new HashSet<>();
+        Deque<Nodo> pila = new ArrayDeque<>();
+        pila.push(nodoInicial);
+        int maxHijos = 0;
+
+        while (!pila.isEmpty()) {
+            Nodo actual = pila.pop();
+            visitados.add(actual);
+            int cantidadHijos = 0;
+
+            for (Arista arista : actual.getAristas()) {
+                Nodo hijo = arista.getHijo();
+                // Solo se consideran los nodos que no han sido visitados previamente
+                if (!visitados.contains(hijo)) {
+                    cantidadHijos++;
+                    visitados.add(hijo);
+                    pila.push(hijo);
+                }
+            }
+            // Actualizar la máxima cantidad de hijos encontrada
+            maxHijos = Math.max(maxHijos, cantidadHijos);
+        }
+
+        return maxHijos;
+    }
+
+    public int calcularNumeroAristas(Nodo nodoInicial) {
+        if (nodoInicial == null) {
+            return 0;
+        }
+
+        int numAristas = 0;
+        Set<Nodo> visitados = new HashSet<>();
+        Deque<Nodo> cola = new ArrayDeque<>();
+        cola.offer(nodoInicial);
+
+        while (!cola.isEmpty()) {
+            Nodo actual = cola.poll();
+            visitados.add(actual);
+
+            for (Arista arista : actual.getAristas()) {
+                Nodo hijo = arista.getHijo();
+                if (!visitados.contains(hijo)) {
+                    cola.offer(hijo);
+                    numAristas++;
+                }
+            }
+        }
+
+        return numAristas;
+    }
+
+    public int calcularNumeroNodos(Nodo nodoInicial) {
+        if (nodoInicial == null) {
+            return 0;
+        }
+
+        int numNodos = 0;
+        Set<Nodo> visitados = new HashSet<>();
+        Deque<Nodo> cola = new ArrayDeque<>();
+        cola.offer(nodoInicial);
+
+        while (!cola.isEmpty()) {
+            Nodo actual = cola.poll();
+            visitados.add(actual);
+            numNodos++;
+
+            for (Arista arista : actual.getAristas()) {
+                Nodo hijo = arista.getHijo();
+                if (!visitados.contains(hijo)) {
+                    cola.offer(hijo);
+                }
+            }
+        }
+
+        return numNodos;
+    }
+
 }

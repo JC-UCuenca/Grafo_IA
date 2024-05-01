@@ -31,13 +31,22 @@ public class CtrlPrincipal implements ActionListener {
         principal.getBtnArchivo().addActionListener(this);
         principal.getBtnEjecutar().addActionListener(this);
         principal.getBtnGraficar().addActionListener(this);
-        principal.getTxtInicio().setText("arad");
-        principal.getTxtFin().setText("bucharest");
+        principal.getTxtInicio().setText("H");
+        principal.getTxtFin().setText("L");
         principal.getChkCostoUni().setSelected(true);
         //grafo.cargarGrafo(".\\CSV files\\ejemplo2.csv");
 
+        JCheckBox chk;
+
+        for (Component c : principal.getPanelMetodos().getComponents()) {
+            chk = (JCheckBox) c;
+            chk.setSelected(true);
+        }
+
         principal.getPanelGrafo().setLayout(null);
         principal.getPanelTabla().setLayout(new BoxLayout(principal.getPanelTabla(), BoxLayout.Y_AXIS));
+
+        //principal.setExtendedState(principal.MAXIMIZED_BOTH);
     }
 
     @Override
@@ -66,10 +75,15 @@ public class CtrlPrincipal implements ActionListener {
                 return;
 
             drawGraph();
-            System.out.println(principal.getPanelGrafo().getHeight());
-            System.out.println(principal.getPanelGrafo().getWidth());
+//            System.out.println(principal.getPanelGrafo().getHeight());
+//            System.out.println(principal.getPanelGrafo().getWidth());
             principal.getPanelGrafo().revalidate();
             principal.getPanelGrafo().repaint();
+
+            //Verificar profundidad
+            Nodo n = grafo.getNodos().get(principal.getTxtInicio().getText());
+            System.out.println("Profundidad: " + grafo.obtenerNivelProfundidad(n));
+            System.out.println("Mayor hijos: " + grafo.obtenerMaximaCantidadHijos(n));
         }
     }
 
@@ -110,7 +124,7 @@ public class CtrlPrincipal implements ActionListener {
         StringBuilder methods = new StringBuilder();
         JCheckBox chk;
 
-        for (Component c : principal.getJPanel2().getComponents()) {
+        for (Component c : principal.getPanelMetodos().getComponents()) {
             chk = (JCheckBox) c;
             if (chk.isSelected())
                 methods.append(chk.getText()).append(",");
@@ -126,34 +140,83 @@ public class CtrlPrincipal implements ActionListener {
 
         principal.getPanelTabla().removeAll();
 
-        String[][] methodsTime = new String[searchMethods().length][2];
+        String[][] methodsFeatures = new String[searchMethods().length][4];
         int index = 0;
         int width = principal.getPanelTabla().getWidth() - 30;
+
+        int d = grafo.obtenerNivelProfundidad(grafo.getNodos().get(inicio)); // Depth Level
+        int b = grafo.obtenerMaximaCantidadHijos(grafo.getNodos().get(inicio)); //Max children
+        int E = grafo.calcularNumeroAristas(grafo.getNodos().get(inicio)); // #Aristas
+        int V = grafo.calcularNumeroNodos(grafo.getNodos().get(inicio)); // #Nodos
 
         for (String method : searchMethods()) {
             if (method.isEmpty()) continue;
 
             long tiempoInicial = System.nanoTime();
 
-            tableData = switch (method) {
-                case "Amplitud" -> grafo.amplitud(inicio, metas);
-                case "Profundidad" -> grafo.profundidad(inicio, metas);
-                case "Bidireccional" -> grafo.bidireccional(inicio, metas[0]);
-                case "Profundidad Iterativa" -> grafo.profundidadIterativa(inicio, metas);
-                case "Costo Uniforme" -> grafo.costoUniforme(inicio, metas);
-                case "Gradiente" -> grafo.gradiente(inicio, metas);
-                case "Primero el Mejor" -> grafo.primeroElMejor(inicio, metas);
-                case "A*" -> grafo.AEstrella(inicio, metas);
-                default -> tableData;
-            };
+            switch (method){
+                case "Amplitud":
+                    tableData = grafo.amplitud(inicio, metas);
+                    methodsFeatures[index][2] = String.valueOf(Math.pow(b, d + 1)); //temporal
+                    methodsFeatures[index][3] = String.valueOf(Math.pow(b, d + 1)); //espacial
+                    break;
+
+                case "Profundidad":
+                    tableData = grafo.profundidad(inicio, metas);
+                    methodsFeatures[index][2] = String.valueOf(Math.pow(b, d));
+                    methodsFeatures[index][3] = String.valueOf(b*d);
+                    break;
+
+                case "Bidireccional":
+                    tableData = grafo.bidireccional(inicio, metas[0]);
+                    methodsFeatures[index][2] = String.valueOf(Math.pow(b, d/2));
+                    methodsFeatures[index][3] = String.valueOf(Math.pow(b, d/2));
+                    break;
+
+                case "Profundidad Iterativa":
+                    tableData = grafo.profundidadIterativa(inicio, metas);
+                    methodsFeatures[index][2] = String.valueOf(Math.pow(b, d));
+                    methodsFeatures[index][3] = String.valueOf(b*d);
+                    break;
+
+                case "Costo Uniforme":
+                    tableData = grafo.costoUniforme(inicio, metas);
+                    String firstTuple = tableData.get(1)[1];
+                    String lastTuple = tableData.get(tableData.size()-1)[1];
+                    int dC = Integer.parseInt(lastTuple.substring(lastTuple.indexOf("(") + 1, lastTuple.length()-1));
+                    int epsilon = Integer.parseInt(firstTuple.substring(firstTuple.indexOf("(") + 1, firstTuple.length()-1));
+                    epsilon = (epsilon!=0) ? epsilon : 1;
+                    methodsFeatures[index][2] = String.valueOf(Math.pow(b, Math.ceil(dC/epsilon)));
+                    methodsFeatures[index][3] = String.valueOf(Math.pow(b, Math.ceil(dC/epsilon)));
+                    break;
+
+                case "Gradiente":
+                    tableData = grafo.gradiente(inicio, metas);
+                    methodsFeatures[index][2] = String.valueOf(Math.pow(b, d));
+                    methodsFeatures[index][3] = "1";
+                    break;
+
+                case "Primero el Mejor":
+                    tableData = grafo.primeroElMejor(inicio, metas);
+                    methodsFeatures[index][2] = String.valueOf(E * Math.log(V));
+                    methodsFeatures[index][3] = String.valueOf(V + E);
+                    break;
+
+                case "A*":
+                    tableData = grafo.AEstrella(inicio, metas);
+                    methodsFeatures[index][2] = String.valueOf(E * Math.log(V));
+                    methodsFeatures[index][3] = String.valueOf(V + E);
+                    break;
+
+            }
 
             double tiempo = (System.nanoTime() - tiempoInicial) / 1e9;
 
             System.out.println(method + ": " + tiempo);
             principal.getPanelTabla().add(new JLabel(method));
 //            principal.getPanelTabla().add(new JLabel("Tiempo: " + tiempo));
-            methodsTime[index][0] = method;
-            methodsTime[index][1] = Double.toString(tiempo);
+            methodsFeatures[index][0] = method;
+            methodsFeatures[index][1] = Double.toString(tiempo);
             index++;
             if (tableData != null) {
                 JScrollPane scrollPane = new JScrollPane();
@@ -169,7 +232,7 @@ public class CtrlPrincipal implements ActionListener {
             }
         }
 
-        JTable table = createTable(methodsTime, "Método", "Tiempo (s)");
+        JTable table = createTable(methodsFeatures, "Método", "Tiempo (s)", "O Temporal", "O Espacial");
         JScrollPane scrollPane = new JScrollPane();
         scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
 
@@ -276,7 +339,7 @@ public class CtrlPrincipal implements ActionListener {
             }
 
         }
-        System.out.println(level);
+//        System.out.println(level);
         principal.getPanelGrafo().setPreferredSize(new Dimension(x + dx, 50));
 
         principal.getSPanelGrafo().revalidate();

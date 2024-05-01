@@ -8,5 +8,6 @@ public class MainWindow {
         VPrincipal view = new VPrincipal();
         CtrlPrincipal ctrlPrincipal = new CtrlPrincipal(view);
         view.show();
+
     }
 }
