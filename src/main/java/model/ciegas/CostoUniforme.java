@@ -1,5 +1,6 @@
 package model.ciegas;
 
+import model.estructura.Tupla;
 import model.grafo.Nodo;
 
 import java.util.*;
@@ -15,13 +16,13 @@ public class CostoUniforme {
                 add(null);
             }};
 
-        Queue<Tupla<Nodo, Integer>> cola = new LinkedList<>();
+        Queue<Tupla> cola = new LinkedList<>();
         List<Tupla> visitados = new ArrayList<>();
         Tupla tuplaActual;
         Nodo nodoActual;
         Integer pesoActual;
 
-        cola.add(new Tupla<>(inicio, 0));
+        cola.add(new Tupla(inicio, 0));
         ArrayList<String[]> tabla = new ArrayList<>() {{
             add(new String[]{cola.peek().toString(), ""});
         }};
@@ -36,18 +37,18 @@ public class CostoUniforme {
             objetivos.remove(nodoActual);
 
 
-            List<Tupla<Nodo, Integer>> hijos = new ArrayList<>(nodoActual.getAristas()
-                    .stream().map(x -> new Tupla<>(x.getHijo(), x.getPeso())).toList());
+            List<Tupla> hijos = new ArrayList<>(nodoActual.getAristas()
+                    .stream().map(x -> new Tupla(x.getHijo(), x.getPeso())).toList());
 
             hijos.removeAll(visitados);
             hijos.removeAll(cola);
 
             Integer finalPesoActual = pesoActual;
-            cola.addAll(hijos.stream().map(x -> new Tupla<>(x.nodo, x.acumulado + finalPesoActual)).toList());
+            cola.addAll(hijos.stream().map(x -> new Tupla(x.getNodo(), x.getAcumulado() + finalPesoActual)).toList());
 
-            List<Tupla<Nodo, Integer>> tempList = new ArrayList<>(cola);
+            List<Tupla> tempList = new ArrayList<>(cola);
             cola.clear();
-            tempList.sort(Comparator.comparing(t -> t.acumulado));
+            tempList.sort(Comparator.comparing(t -> t.getAcumulado()));
             cola.addAll(tempList);
 
             tabla.add(new String[]{String.join(", ", cola.stream()
@@ -62,48 +63,6 @@ public class CostoUniforme {
         }
 
         return tabla;
-    }
-
-    private class Tupla<A, B> implements Comparable<Tupla> {
-        private final A nodo;
-        private final B acumulado;
-
-        public Tupla(A first, B second) {
-            this.nodo = first;
-            this.acumulado = second;
-        }
-
-        public A getNodo() {
-            return nodo;
-        }
-
-        public B getAcumulado() {
-            return acumulado;
-        }
-
-        @Override
-        public String toString() {
-            return nodo + "(" + acumulado + ")";
-        }
-
-        @Override
-        public int compareTo(Tupla otraTupla) {
-            return Integer.compare((Integer) getAcumulado(), (Integer) otraTupla.getAcumulado());
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            Tupla tupla = (Tupla) o;
-            return getAcumulado() == tupla.getAcumulado() &&
-                    Objects.equals(getNodo(), tupla.getNodo());
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(getNodo(), getAcumulado());
-        }
     }
 
 }

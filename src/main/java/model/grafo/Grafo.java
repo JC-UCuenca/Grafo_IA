@@ -105,9 +105,8 @@ public class Grafo {
             e.printStackTrace();
         }
 
-        return new ArrayList<>(Bidireccional.getTabla()
-                .stream().map(lista -> lista.toArray(new String[0]))
-                .collect(Collectors.toList()));
+        return Bidireccional.getTabla()
+                .stream().map(lista -> lista.toArray(new String[0])).collect(Collectors.toCollection(ArrayList::new));
     }
 
     public ArrayList<String[]> profundidadIterativa(String partida, String... metas){
@@ -155,7 +154,7 @@ public class Grafo {
         return new AEstrella().buscar(origen, objetivos);
     }
 
-    public int obtenerNivelProfundidad(Nodo nodo) {
+    public Integer obtenerNivelProfundidad(Nodo nodo) {
         if (nodo == null) {
             return -1; // Nodo no encontrado
         }
@@ -166,13 +165,9 @@ public class Grafo {
         Deque<Nodo> pila = new ArrayDeque<>();
         pila.push(nodo);
 
-        int maxProfundidad = 0;
-
         while (!pila.isEmpty()) {
             Nodo actual = pila.pop();
             int nivelActual = niveles.get(actual);
-
-            maxProfundidad = Math.max(maxProfundidad, nivelActual);
 
             for (Arista arista : actual.getAristas()) {
                 Nodo hijo = arista.getHijo();
@@ -183,7 +178,7 @@ public class Grafo {
             }
         }
 
-        return maxProfundidad;
+        return niveles.size();
     }
 
     public int obtenerMaximaCantidadHijos(Nodo nodoInicial) {
@@ -211,7 +206,9 @@ public class Grafo {
                 }
             }
             // Actualizar la máxima cantidad de hijos encontrada
-            maxHijos = Math.max(maxHijos, cantidadHijos);
+            if (cantidadHijos > maxHijos) {
+                maxHijos = cantidadHijos;
+            }
         }
 
         return maxHijos;
@@ -233,7 +230,8 @@ public class Grafo {
 
             for (Arista arista : actual.getAristas()) {
                 Nodo hijo = arista.getHijo();
-                if (!visitados.contains(hijo)) {
+                // Solo se consideran los nodos que no han sido visitados previamente
+                if (visitados.add(hijo)) {
                     cola.offer(hijo);
                     numAristas++;
                 }
@@ -260,7 +258,8 @@ public class Grafo {
 
             for (Arista arista : actual.getAristas()) {
                 Nodo hijo = arista.getHijo();
-                if (!visitados.contains(hijo)) {
+                // Solo se consideran los nodos que no han sido visitados previamente
+                if (visitados.add(hijo)) {
                     cola.offer(hijo);
                 }
             }

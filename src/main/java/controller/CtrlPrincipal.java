@@ -18,33 +18,38 @@ import java.util.*;
 import java.util.List;
 
 public class CtrlPrincipal implements ActionListener {
-    VPrincipal principal;
-    Grafo grafo;
+    private VPrincipal view;
+    private Grafo grafo;
+    private boolean fileLoad;
 
-    public CtrlPrincipal(VPrincipal principal) {
-        this.principal = principal;
+
+    public CtrlPrincipal(VPrincipal view) {
+        this.view = view;
         this.grafo = new Grafo();
+        this.fileLoad = false;
         initComponents();
     }
 
     private void initComponents() {
-        principal.getBtnArchivo().addActionListener(this);
-        principal.getBtnEjecutar().addActionListener(this);
-        principal.getBtnGraficar().addActionListener(this);
-        principal.getTxtInicio().setText("H");
-        principal.getTxtFin().setText("L");
-        principal.getChkCostoUni().setSelected(true);
-        //grafo.cargarGrafo(".\\CSV files\\ejemplo2.csv");
+        view.getBtnArchivo().addActionListener(this);
+        view.getBtnEjecutar().addActionListener(this);
+        view.getBtnGraficar().addActionListener(this);
+        view.getTxtInicio().setText("H");
+        view.getTxtFin().setText("L");
+        view.getChkCostoUni().setSelected(true);
+        grafo.cargarGrafo(".\\CSV files\\ejemplo2.csv");
+        this.fileLoad = true;
 
         JCheckBox chk;
-
-        for (Component c : principal.getPanelMetodos().getComponents()) {
+        for(Component c: view.getPanelMetodos().getComponents()){
             chk = (JCheckBox) c;
             chk.setSelected(true);
         }
 
-        principal.getPanelGrafo().setLayout(null);
-        principal.getPanelTabla().setLayout(new BoxLayout(principal.getPanelTabla(), BoxLayout.Y_AXIS));
+        view.getChkBidireccional().setSelected(true);
+
+        view.getPanelGrafo().setLayout(null);
+        view.getPanelTabla().setLayout(new BoxLayout(view.getPanelTabla(), BoxLayout.Y_AXIS));
 
         //principal.setExtendedState(principal.MAXIMIZED_BOTH);
     }
@@ -53,37 +58,31 @@ public class CtrlPrincipal implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         Object component = e.getSource();
 
-        if (component == principal.getBtnArchivo()) {
+        if (component == view.getBtnArchivo()) {
             String filePath = selectCSVFile();
             if (filePath != null) {
                 grafo.getNodos().clear();
                 grafo.cargarGrafo(filePath);
                 System.out.println(filePath);
-                principal.getLblArchivo().setText(
+                view.getLblArchivo().setText(
                         filePath.substring(filePath.lastIndexOf("\\") + 1)
                 );
+                this.fileLoad = true;
             } else {
-                principal.getLblArchivo().setText("Archivo no seleccionado");
+                view.getLblArchivo().setText("Archivo no seleccionado");
             }
 
-        } else if (component == principal.getBtnEjecutar()) {
-            if (!principal.getLblArchivo().getText().equals("Archivo no seleccionado"))
+        } else if (component == view.getBtnEjecutar()) {
+            if (this.fileLoad)
                 search();
 
-        } else if (component == principal.getBtnGraficar()) {
-            if (principal.getLblArchivo().getText().equals("Archivo no seleccionado"))
+        } else if (component == view.getBtnGraficar()) {
+            if (!this.fileLoad)
                 return;
 
             drawGraph();
-//            System.out.println(principal.getPanelGrafo().getHeight());
-//            System.out.println(principal.getPanelGrafo().getWidth());
-            principal.getPanelGrafo().revalidate();
-            principal.getPanelGrafo().repaint();
-
-            //Verificar profundidad
-            Nodo n = grafo.getNodos().get(principal.getTxtInicio().getText());
-            System.out.println("Profundidad: " + grafo.obtenerNivelProfundidad(n));
-            System.out.println("Mayor hijos: " + grafo.obtenerMaximaCantidadHijos(n));
+            view.getPanelGrafo().revalidate();
+            view.getPanelGrafo().repaint();
         }
     }
 
@@ -124,7 +123,7 @@ public class CtrlPrincipal implements ActionListener {
         StringBuilder methods = new StringBuilder();
         JCheckBox chk;
 
-        for (Component c : principal.getPanelMetodos().getComponents()) {
+        for (Component c : view.getPanelMetodos().getComponents()) {
             chk = (JCheckBox) c;
             if (chk.isSelected())
                 methods.append(chk.getText()).append(",");
@@ -134,15 +133,15 @@ public class CtrlPrincipal implements ActionListener {
     }
 
     private void search() {
-        String inicio = principal.getTxtInicio().getText().trim();
-        String[] metas = principal.getTxtFin().getText().split(",");
+        String inicio = view.getTxtInicio().getText().trim();
+        String[] metas = view.getTxtFin().getText().split(",");
         ArrayList<String[]> tableData = null;
 
-        principal.getPanelTabla().removeAll();
+        view.getPanelTabla().removeAll();
 
         String[][] methodsFeatures = new String[searchMethods().length][4];
         int index = 0;
-        int width = principal.getPanelTabla().getWidth() - 30;
+        int width = view.getPanelTabla().getWidth() - 30;
 
         int d = grafo.obtenerNivelProfundidad(grafo.getNodos().get(inicio)); // Depth Level
         int b = grafo.obtenerMaximaCantidadHijos(grafo.getNodos().get(inicio)); //Max children
@@ -151,7 +150,7 @@ public class CtrlPrincipal implements ActionListener {
 
         for (String method : searchMethods()) {
             if (method.isEmpty()) continue;
-
+            System.out.println("Método: " + method + "\n");
             long tiempoInicial = System.nanoTime();
 
             switch (method){
@@ -212,12 +211,11 @@ public class CtrlPrincipal implements ActionListener {
 
             double tiempo = (System.nanoTime() - tiempoInicial) / 1e9;
 
-            System.out.println(method + ": " + tiempo);
-            principal.getPanelTabla().add(new JLabel(method));
-//            principal.getPanelTabla().add(new JLabel("Tiempo: " + tiempo));
+            view.getPanelTabla().add(new JLabel(method));
             methodsFeatures[index][0] = method;
             methodsFeatures[index][1] = Double.toString(tiempo);
             index++;
+
             if (tableData != null) {
                 JScrollPane scrollPane = new JScrollPane();
                 JTable table = createTable(tableData);
@@ -228,7 +226,7 @@ public class CtrlPrincipal implements ActionListener {
                 scrollPane.setPreferredSize(new Dimension(width, height));
                 scrollPane.setViewportView(table);
 
-                principal.getPanelTabla().add(scrollPane);
+                view.getPanelTabla().add(scrollPane);
             }
         }
 
@@ -241,9 +239,9 @@ public class CtrlPrincipal implements ActionListener {
         scrollPane.setPreferredSize(new Dimension(width, height));
         scrollPane.setViewportView(table);
 
-        principal.getPanelTabla().add(scrollPane);
-        principal.getSPanelTabla().revalidate();
-        principal.getSPanelTabla().repaint();
+        view.getPanelTabla().add(scrollPane);
+        view.getSPanelTabla().revalidate();
+        view.getSPanelTabla().repaint();
     }
 
     private JTable createTable(ArrayList<String[]> data) {
@@ -263,7 +261,7 @@ public class CtrlPrincipal implements ActionListener {
     }
 
     private void drawGraph() {
-        principal.getPanelGrafo().removeAll();
+        view.getPanelGrafo().removeAll();
 
         int size = 10;
         int level = 1;
@@ -271,7 +269,7 @@ public class CtrlPrincipal implements ActionListener {
 
         int dx = 50;
         int x = level * dx;
-        int y = principal.getSPanelGrafo().getHeight() / 2;
+        int y = view.getSPanelGrafo().getHeight() / 2;
 
         Queue<Nodo> cola = new LinkedList<>();
         Nodo nodoActual;
@@ -281,7 +279,6 @@ public class CtrlPrincipal implements ActionListener {
 
         int children = -1;
         while (!cola.isEmpty()) {
-            System.out.println(Arrays.toString(cola.toArray()));
             nodoActual = cola.poll();
             created.put(nodoActual, new Integer[]{x, y});
 
@@ -292,13 +289,13 @@ public class CtrlPrincipal implements ActionListener {
             hijos.removeAll(created.keySet());
             cola.addAll(hijos);
 
-            principal.getPanelGrafo().add(new Rectangulo(x, y, size, size));
-            System.out.println("Nodo: " + nodoActual.getNombre() + " Coordenadas: " + x + ", " + y);
+            view.getPanelGrafo().add(new Rectangulo(x, y, size, size));
+//            System.out.println("Nodo: " + nodoActual.getNombre() + " Coordenadas: " + x + ", " + y);
 
 
             JLabel label = new JLabel(nodoActual.getNombre());
             label.setBounds(x, y - size * 2, 50, size * 2);
-            principal.getPanelGrafo().add(label);
+            view.getPanelGrafo().add(label);
 
             if (!created.keySet().isEmpty()) {
                 Nodo actualAux = nodoActual;
@@ -310,7 +307,7 @@ public class CtrlPrincipal implements ActionListener {
                 padres.forEach(p -> {
                     Integer[] inicio = created.get(p);
                     Integer[] fin = new Integer[]{finalX, finalY};
-                    principal.getPanelGrafo().add(new Linea(inicio, fin));
+                    view.getPanelGrafo().add(new Linea(inicio, fin));
                 });
                 children--;
             }
@@ -323,7 +320,7 @@ public class CtrlPrincipal implements ActionListener {
 
             if (levelNodes <= 1 && !cola.isEmpty()) {
                 levelNodes = cola.size();
-                tempY = principal.getSPanelGrafo().getHeight() / (2 * levelNodes);
+                tempY = view.getSPanelGrafo().getHeight() / (2 * levelNodes);
                 y = tempY;
                 level++;
                 x = level * dx;
@@ -339,11 +336,10 @@ public class CtrlPrincipal implements ActionListener {
             }
 
         }
-//        System.out.println(level);
-        principal.getPanelGrafo().setPreferredSize(new Dimension(x + dx, 50));
+        view.getPanelGrafo().setPreferredSize(new Dimension(x + dx, 50));
 
-        principal.getSPanelGrafo().revalidate();
-        principal.getSPanelGrafo().repaint();
+        view.getSPanelGrafo().revalidate();
+        view.getSPanelGrafo().repaint();
     }
 
 }
