@@ -105,8 +105,7 @@ public class Grafo {
             e.printStackTrace();
         }
 
-        return Bidireccional.getTabla()
-                .stream().map(lista -> lista.toArray(new String[0])).collect(Collectors.toCollection(ArrayList::new));
+        return Bidireccional.getTabla();
     }
 
     public ArrayList<String[]> profundidadIterativa(String partida, String... metas){
@@ -154,7 +153,8 @@ public class Grafo {
         return new AEstrella().buscar(origen, objetivos);
     }
 
-    public Integer obtenerNivelProfundidad(Nodo nodo) {
+    public Integer obtenerNivelProfundidad(String inicio) {
+        Nodo nodo = nodos.get(inicio);
         if (nodo == null) {
             return -1; // Nodo no encontrado
         }
@@ -165,9 +165,13 @@ public class Grafo {
         Deque<Nodo> pila = new ArrayDeque<>();
         pila.push(nodo);
 
+        int maxProfundidad = 0;
+
         while (!pila.isEmpty()) {
             Nodo actual = pila.pop();
             int nivelActual = niveles.get(actual);
+
+            maxProfundidad = Math.max(maxProfundidad, nivelActual);
 
             for (Arista arista : actual.getAristas()) {
                 Nodo hijo = arista.getHijo();
@@ -178,10 +182,11 @@ public class Grafo {
             }
         }
 
-        return niveles.size();
+        return maxProfundidad;
     }
 
-    public int obtenerMaximaCantidadHijos(Nodo nodoInicial) {
+    public Integer obtenerMaximaCantidadHijos(String inicio) {
+        Nodo nodoInicial = nodos.get(inicio);
         if (nodoInicial == null) {
             return 0;
         }
@@ -214,7 +219,8 @@ public class Grafo {
         return maxHijos;
     }
 
-    public int calcularNumeroAristas(Nodo nodoInicial) {
+    public Integer calcularNumeroAristas(String inicio) {
+        Nodo nodoInicial = nodos.get(inicio);
         if (nodoInicial == null) {
             return 0;
         }
@@ -241,7 +247,8 @@ public class Grafo {
         return numAristas;
     }
 
-    public int calcularNumeroNodos(Nodo nodoInicial) {
+    public Integer calcularNumeroNodos(String inico) {
+        Nodo nodoInicial = nodos.get(inico);
         if (nodoInicial == null) {
             return 0;
         }

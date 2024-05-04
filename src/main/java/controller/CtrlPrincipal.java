@@ -18,8 +18,8 @@ import java.util.*;
 import java.util.List;
 
 public class CtrlPrincipal implements ActionListener {
-    private VPrincipal view;
-    private Grafo grafo;
+    private final VPrincipal view;
+    private final Grafo grafo;
     private boolean fileLoad;
 
 
@@ -37,14 +37,15 @@ public class CtrlPrincipal implements ActionListener {
         view.getTxtInicio().setText("H");
         view.getTxtFin().setText("L");
         view.getChkCostoUni().setSelected(true);
-        grafo.cargarGrafo(".\\CSV files\\ejemplo2.csv");
+        grafo.cargarGrafo(".\\CSV_files\\ejemploBidireccional.csv");
         this.fileLoad = true;
 
         JCheckBox chk;
         for(Component c: view.getPanelMetodos().getComponents()){
             chk = (JCheckBox) c;
-            chk.setSelected(true);
+            chk.setSelected(false);
         }
+        view.getChkBidireccional().setSelected(true);
 
         view.getChkBidireccional().setSelected(true);
 
@@ -67,14 +68,22 @@ public class CtrlPrincipal implements ActionListener {
                 view.getLblArchivo().setText(
                         filePath.substring(filePath.lastIndexOf("\\") + 1)
                 );
+
                 this.fileLoad = true;
+
             } else {
                 view.getLblArchivo().setText("Archivo no seleccionado");
             }
 
         } else if (component == view.getBtnEjecutar()) {
-            if (this.fileLoad)
+            if (this.fileLoad){
+//                System.out.println("Profundiad: " + grafo.obtenerNivelProfundidad(grafo.getNodos().get(view.getTxtInicio().getText())));
+//                System.out.println("Maxima cantidad de hijos: " + grafo.obtenerMaximaCantidadHijos(grafo.getNodos().get(view.getTxtInicio().getText())));
+//                System.out.println("Numero de aristas: " + grafo.calcularNumeroAristas(grafo.getNodos().get(view.getTxtInicio().getText())));
+//                System.out.println("Numero de nodos: " + grafo.calcularNumeroNodos(grafo.getNodos().get(view.getTxtInicio().getText())));
+//                System.out.println("------------------------------------");
                 search();
+            }
 
         } else if (component == view.getBtnGraficar()) {
             if (!this.fileLoad)
@@ -135,7 +144,7 @@ public class CtrlPrincipal implements ActionListener {
     private void search() {
         String inicio = view.getTxtInicio().getText().trim();
         String[] metas = view.getTxtFin().getText().split(",");
-        ArrayList<String[]> tableData = null;
+        ArrayList<String[]> tableData;
 
         view.getPanelTabla().removeAll();
 
@@ -143,105 +152,145 @@ public class CtrlPrincipal implements ActionListener {
         int index = 0;
         int width = view.getPanelTabla().getWidth() - 30;
 
-        int d = grafo.obtenerNivelProfundidad(grafo.getNodos().get(inicio)); // Depth Level
-        int b = grafo.obtenerMaximaCantidadHijos(grafo.getNodos().get(inicio)); //Max children
-        int E = grafo.calcularNumeroAristas(grafo.getNodos().get(inicio)); // #Aristas
-        int V = grafo.calcularNumeroNodos(grafo.getNodos().get(inicio)); // #Nodos
+        HashMap<String, Integer> parameters = calculateComplexityParameters(inicio);
 
         for (String method : searchMethods()) {
-            if (method.isEmpty()) continue;
             System.out.println("Método: " + method + "\n");
-            long tiempoInicial = System.nanoTime();
+            if (method.isEmpty()) continue;
 
-            switch (method){
-                case "Amplitud":
-                    tableData = grafo.amplitud(inicio, metas);
-                    methodsFeatures[index][2] = String.valueOf(Math.pow(b, d + 1)); //temporal
-                    methodsFeatures[index][3] = String.valueOf(Math.pow(b, d + 1)); //espacial
-                    break;
+            long startTime = System.nanoTime();
+            tableData = executeSearchMethod(method, inicio, metas);
+            long endTime = System.nanoTime();
 
-                case "Profundidad":
-                    tableData = grafo.profundidad(inicio, metas);
-                    methodsFeatures[index][2] = String.valueOf(Math.pow(b, d));
-                    methodsFeatures[index][3] = String.valueOf(b*d);
-                    break;
 
-                case "Bidireccional":
-                    tableData = grafo.bidireccional(inicio, metas[0]);
-                    methodsFeatures[index][2] = String.valueOf(Math.pow(b, d/2));
-                    methodsFeatures[index][3] = String.valueOf(Math.pow(b, d/2));
-                    break;
-
-                case "Profundidad Iterativa":
-                    tableData = grafo.profundidadIterativa(inicio, metas);
-                    methodsFeatures[index][2] = String.valueOf(Math.pow(b, d));
-                    methodsFeatures[index][3] = String.valueOf(b*d);
-                    break;
-
-                case "Costo Uniforme":
-                    tableData = grafo.costoUniforme(inicio, metas);
-                    String firstTuple = tableData.get(1)[1];
-                    String lastTuple = tableData.get(tableData.size()-1)[1];
-                    int dC = Integer.parseInt(lastTuple.substring(lastTuple.indexOf("(") + 1, lastTuple.length()-1));
-                    int epsilon = Integer.parseInt(firstTuple.substring(firstTuple.indexOf("(") + 1, firstTuple.length()-1));
-                    epsilon = (epsilon!=0) ? epsilon : 1;
-                    methodsFeatures[index][2] = String.valueOf(Math.pow(b, Math.ceil(dC/epsilon)));
-                    methodsFeatures[index][3] = String.valueOf(Math.pow(b, Math.ceil(dC/epsilon)));
-                    break;
-
-                case "Gradiente":
-                    tableData = grafo.gradiente(inicio, metas);
-                    methodsFeatures[index][2] = String.valueOf(Math.pow(b, d));
-                    methodsFeatures[index][3] = "1";
-                    break;
-
-                case "Primero el Mejor":
-                    tableData = grafo.primeroElMejor(inicio, metas);
-                    methodsFeatures[index][2] = String.valueOf(E * Math.log(V));
-                    methodsFeatures[index][3] = String.valueOf(V + E);
-                    break;
-
-                case "A*":
-                    tableData = grafo.AEstrella(inicio, metas);
-                    methodsFeatures[index][2] = String.valueOf(E * Math.log(V));
-                    methodsFeatures[index][3] = String.valueOf(V + E);
-                    break;
-
-            }
-
-            double tiempo = (System.nanoTime() - tiempoInicial) / 1e9;
+            double durationInSeconds = (endTime - startTime) / 1e9;
+            String time = String.format("%.5f", durationInSeconds);
 
             view.getPanelTabla().add(new JLabel(method));
+
+            methodsFeatures[index] = calculateComplexity(method, parameters, tableData);
             methodsFeatures[index][0] = method;
-            methodsFeatures[index][1] = Double.toString(tiempo);
+            methodsFeatures[index][1] = time;
             index++;
 
             if (tableData != null) {
-                JScrollPane scrollPane = new JScrollPane();
-                JTable table = createTable(tableData);
-                int height = (int) (table.getPreferredSize().getHeight() +
-                        table.getTableHeader().getPreferredSize().getHeight());
-
-                scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
-                scrollPane.setPreferredSize(new Dimension(width, height));
-                scrollPane.setViewportView(table);
-
-                view.getPanelTabla().add(scrollPane);
+                addTableToPanel(tableData, width);
             }
         }
 
-        JTable table = createTable(methodsFeatures, "Método", "Tiempo (s)", "O Temporal", "O Espacial");
-        JScrollPane scrollPane = new JScrollPane();
-        scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+        addTableToPanel(methodsFeatures, width, "Método", "Tiempo (s)", "O Temporal", "O Espacial");
+        view.getSPanelTabla().revalidate();
+        view.getSPanelTabla().repaint();
+    }
 
+    private ArrayList<String[]> executeSearchMethod(String method, String inicio, String[] metas) {
+        return switch (method) {
+            case "Amplitud" -> grafo.amplitud(inicio, metas);
+            case "Profundidad" -> grafo.profundidad(inicio, metas);
+            case "Bidireccional" -> grafo.bidireccional(inicio, metas[0]);
+            case "Profundidad Iterativa" -> grafo.profundidadIterativa(inicio, metas);
+            case "Costo Uniforme" -> grafo.costoUniforme(inicio, metas);
+            case "Gradiente" -> grafo.gradiente(inicio, metas);
+            case "Primero el Mejor" -> grafo.primeroElMejor(inicio, metas);
+            case "A*" -> grafo.AEstrella(inicio, metas);
+            default -> null;
+        };
+
+    }
+
+    private HashMap<String, Integer> calculateComplexityParameters(String inicio) {
+        HashMap<String, Integer> parameters = new HashMap<>();
+
+        parameters.put("d", grafo.obtenerNivelProfundidad(inicio));
+        parameters.put("b", grafo.obtenerMaximaCantidadHijos(inicio));
+        parameters.put("E", grafo.calcularNumeroAristas(inicio));
+        parameters.put("V", grafo.calcularNumeroNodos(inicio));
+
+        return parameters;
+    }
+
+    private String[] calculateComplexity(String method, HashMap<String, Integer> parameters, ArrayList<String[]> tableData) {
+    String[] row = new String[4];
+
+    switch (method){
+        case "Amplitud":
+            row[2] = String.format("%e", Math.pow(parameters.get("b"), parameters.get("d") + 1));
+            row[3] = row[2];
+            break;
+        case "Profundidad":
+            row[2] = String.format("%e", Math.pow(parameters.get("b"), parameters.get("d")));
+            row[3] = String.format("%e", parameters.get("b").doubleValue() * parameters.get("d"));
+            break;
+        case "Bidireccional":
+            row[2] = String.format("%e", Math.pow(parameters.get("b"), parameters.get("d") / 2));
+            row[3] = row[2];
+            break;
+        case "Profundidad Iterativa":
+            row[2] = String.format("%e", Math.pow(parameters.get("b"), parameters.get("d")));
+            row[3] = String.format("%e", parameters.get("b").doubleValue() * parameters.get("d"));
+            break;
+        case "Costo Uniforme":
+            String firstTuple = tableData.get(1)[1];
+            String lastTuple = tableData.getLast()[1];
+
+            int dC = Integer.parseInt(lastTuple.substring(lastTuple.indexOf("(") + 1, lastTuple.length()-1));
+            int epsilon = Integer.parseInt(firstTuple.substring(firstTuple.indexOf("(") + 1, firstTuple.length()-1));
+            epsilon = (epsilon!=0) ? epsilon : 1;
+
+            row[2] = String.format("%e", Math.pow(parameters.get("b"), Math.ceil(dC/epsilon)));
+            row[3] = row[2];
+
+            break;
+        case "Gradiente":
+            row[2] = String.format("%e", Math.pow(parameters.get("b"), parameters.get("d")));
+            row[3] = "1";
+            break;
+        case "Primero el Mejor":
+            row[2] = String.format("%e", parameters.get("E") * Math.log(parameters.get("V")));
+            row[3] = String.format("%e", parameters.get("V").doubleValue() + parameters.get("E"));
+            break;
+        case "A*":
+            row[2] = String.format("%e", parameters.get("E") * Math.log(parameters.get("V")));
+            row[3] = String.format("%e", parameters.get("V").doubleValue() + parameters.get("E"));
+            break;
+        default:
+            row[2] = "";
+            row[3] = "";
+            break;
+    }
+
+    return row;
+}
+
+    private void addTableToPanel(ArrayList<String[]> data, int width) {
+        System.out.println("Data: ");
+        for (String[] row : data) {
+            System.out.println(Arrays.toString(row));
+        }
+
+        JScrollPane scrollPane = new JScrollPane();
+        JTable table = createTable(data);
         int height = (int) (table.getPreferredSize().getHeight() +
                 table.getTableHeader().getPreferredSize().getHeight());
+
+        scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
         scrollPane.setPreferredSize(new Dimension(width, height));
         scrollPane.setViewportView(table);
 
         view.getPanelTabla().add(scrollPane);
-        view.getSPanelTabla().revalidate();
-        view.getSPanelTabla().repaint();
+    }
+
+    private void addTableToPanel(String[][] data, int width, String... headers) {
+        JScrollPane scrollPane = new JScrollPane();
+        JTable table = createTable(data, headers);
+        int height = (int) (table.getPreferredSize().getHeight() +
+                table.getTableHeader().getPreferredSize().getHeight());
+
+        scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+        scrollPane.setPreferredSize(new Dimension(width, height));
+        scrollPane.setViewportView(table);
+
+        view.getPanelTabla().add(scrollPane);
     }
 
     private JTable createTable(ArrayList<String[]> data) {
