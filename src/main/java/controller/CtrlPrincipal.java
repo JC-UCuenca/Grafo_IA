@@ -339,7 +339,7 @@ public class CtrlPrincipal implements ActionListener {
             cola.addAll(hijos);
 
             view.getPanelGrafo().add(new Rectangulo(x, y, size, size));
-//            System.out.println("Nodo: " + nodoActual.getNombre() + " Coordenadas: " + x + ", " + y);
+            System.out.println("Nodo: " + nodoActual.getNombre() + " Coordenadas: " + x + ", " + y);
 
 
             JLabel label = new JLabel(nodoActual.getNombre());
@@ -356,7 +356,9 @@ public class CtrlPrincipal implements ActionListener {
                 padres.forEach(p -> {
                     Integer[] inicio = created.get(p);
                     Integer[] fin = new Integer[]{finalX, finalY};
-                    view.getPanelGrafo().add(new Linea(inicio, fin));
+                    view.getPanelGrafo().add(new Linea(inicio, fin,
+                            view.getPanelGrafo().getWidth(), view.getPanelGrafo().getHeight()));
+                    System.out.println("Linea: " + Arrays.toString(inicio) +" " + Arrays.toString(fin));
                 });
                 children--;
             }

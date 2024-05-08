@@ -16,7 +16,7 @@ public class CostoUniforme {
                 add(null);
             }};
 
-        Queue<Tupla> cola = new LinkedList<>();
+        PriorityQueue<Tupla> cola = new PriorityQueue<>();
         List<Tupla> visitados = new ArrayList<>();
         Tupla tuplaActual;
         Nodo nodoActual;
@@ -28,14 +28,12 @@ public class CostoUniforme {
         }};
 
         while (!cola.isEmpty()) {
-            tuplaActual = cola.stream().min(Tupla::compareTo).get();
-            cola.remove(tuplaActual);
+            tuplaActual = cola.poll();
             nodoActual = (Nodo) tuplaActual.getNodo();
             pesoActual = (Integer) tuplaActual.getAcumulado();
             visitados.add(tuplaActual);
 
             objetivos.remove(nodoActual);
-
 
             List<Tupla> hijos = new ArrayList<>(nodoActual.getAristas()
                     .stream().map(x -> new Tupla(x.getHijo(), x.getPeso())).toList());
@@ -46,20 +44,11 @@ public class CostoUniforme {
             Integer finalPesoActual = pesoActual;
             cola.addAll(hijos.stream().map(x -> new Tupla(x.getNodo(), x.getAcumulado() + finalPesoActual)).toList());
 
-            List<Tupla> tempList = new ArrayList<>(cola);
-            cola.clear();
-            tempList.sort(Comparator.comparing(t -> t.getAcumulado()));
-            cola.addAll(tempList);
-
             tabla.add(new String[]{String.join(", ", cola.stream()
                     .map(Tupla::toString).toList()), nodoActual.getNombre() + "("+pesoActual+")"});
 
             if (objetivos.isEmpty())
                 cola.clear();
-
-//            System.out.println("Cola: " + String.join(", ", cola.stream()
-//                    .map(Tupla::toString).toList()) + "***Actual: " + tuplaActual.toString());
-//            System.out.println("");
         }
 
         return tabla;

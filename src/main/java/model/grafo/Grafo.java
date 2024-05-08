@@ -95,6 +95,9 @@ public class Grafo {
         Thread hilo1 = new Thread(bidireccional1);
         Thread hilo2 = new Thread(bidireccional2);
 
+        hilo1.setName("Hilo 1");
+        hilo2.setName("Hilo 2");
+
         hilo1.start();
         hilo2.start();
 

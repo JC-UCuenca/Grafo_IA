@@ -8,13 +8,14 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Bidireccional implements Runnable {
 
-    private static final ArrayList<Nodo> nodosExistentes = new ArrayList<>();
+    private static final CopyOnWriteArrayList<Nodo> nodosExistentes = new CopyOnWriteArrayList<>();
     @Getter
     private static final ArrayList<String[]> tabla = new ArrayList<>();
 
@@ -50,7 +51,6 @@ public class Bidireccional implements Runnable {
             List<Nodo> hijos = getHijosNoVisitados(nodoActual, cola, extraccion);
 
             if (existeInterseccion(hijos)) {
-//                eliminarExistentes(hijos);
                 cola.addAll(hijos);
                 colaHistorial.add(cola.stream().map(Nodo::getNombre).collect(Collectors.joining(", ")));
                 break;
@@ -93,9 +93,9 @@ public class Bidireccional implements Runnable {
     }
 
     private List<Nodo> getHijosNoVisitados(Nodo nodo, Queue<Nodo> cola, ArrayList<Nodo> extraccion) {
-        List<Nodo> hijos = new ArrayList<>(nodo.getAristas()
+        List<Nodo> hijos = nodo.getAristas()
                 .stream().filter(a -> a.getPadre().equals(nodo))
-                .map(Arista::getHijo).toList());
+                .map(Arista::getHijo).collect(Collectors.toList());
 
         hijos.removeAll(cola);
         hijos.removeAll(extraccion);
