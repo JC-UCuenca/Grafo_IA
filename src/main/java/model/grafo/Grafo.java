@@ -24,34 +24,15 @@ public class Grafo {
             while ((line = br.readLine()) != null) {
                 String[] datos = line.split(",");
 
-                for (int i = 0; i < datos.length; i++) {
-                    if(datos[i].isEmpty() || datos[i].equals("0")){
-                        datos[i] = "0";
-                    }
-                }
-
-//                System.out.println(Arrays.toString(datos));
-                String pesoNodo = "0";
-                String pesoArista = "0";
-                if(datos.length>=3) pesoNodo = datos[2];
-                if(datos.length>=4) pesoArista = datos[3];
                 if(!nodos.containsKey(datos[0])){
-                    nodos.put(datos[0], new Nodo(datos[0], Integer.parseInt(pesoNodo)));
-
-                } else if (nodos.get(datos[0]).getPeso() == 0) {
-                    nodos.get(datos[0]).setPeso(Integer.parseInt(pesoNodo));
+                    nodos.put(datos[0], new Nodo(datos[0], Integer.parseInt(datos[2])));
                 }
 
                 if(!nodos.containsKey(datos[1])){
-                    nodos.put(datos[1], new Nodo(datos[1], 0));
+                    nodos.put(datos[1], new Nodo(datos[1], Integer.parseInt(datos[3])));
                 }
 
-
-                if(datos.length==4){
-                    pesoArista = datos[3];
-                }
-                nodos.get(datos[0]).addArista(nodos.get(datos[1]), Integer.parseInt(pesoArista));
-
+                nodos.get(datos[0]).addArista(nodos.get(datos[1]), Integer.parseInt(datos[4]));
             }
 
         } catch (IOException e) {

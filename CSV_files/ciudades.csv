@@ -1,0 +1,47 @@
+Padre,Hijo,H_Padre,H_Hijo,Arista
+arad,sibiu,366,253,140
+arad,timisoara,366,329,118
+arad,zenrid,366,374,75
+zenrid,arad,374,366,75
+zenrid,oradea,374,380,71
+oradea,zenrid,380,374,71
+oradea,sibiu,380,253,151
+timisoara,arad,329,366,118
+timisoara,lugoj,329,244,111
+sibiu,arad,253,366,140
+sibiu,oradea,253,380,151
+sibiu,fagaras,253,178,99
+sibiu,rimnicu vilcea,253,193,80
+lugoj,timisoara,244,329,111
+lugoj,mehadia,244,241,70
+mehadia,lugoj,241,244,70
+mehadia,dobreta,241,242,75
+dobreta,mehadia,242,241,75
+dobreta,craiova,242,160,120
+craiova,dobreta,160,242,120
+craiova,rimnicu vilcea,160,193,146
+craiova,pitesti,160,98,138
+rimnicu vilcea,sibiu,193,253,80
+rimnicu vilcea,craiova,193,160,146
+rimnicu vilcea,pitesti,193,98,97
+fagaras,sibiu,178,253,99
+fagaras,bucharest,178,0,211
+pitesti,rimnicu vilcea,98,193,97
+pitesti,craiova,98,160,138
+pitesti,bucharest,98,0,101
+bucharest,giurgiu,0,77,90
+bucharest,pitesti,0,98,101
+bucharest,fagaras,0,178,211
+bucharest,urziceni,0,80,85
+giurgiu,bucharest,77,0,90
+urziceni,bucharest,80,0,85
+urziceni,vaslui,80,199,142
+urziceni,hirsova,80,151,98
+hirsova,urziceni,151,80,98
+hirsova,eforie,151,161,86
+eforie,hirsova,161,151,86
+vaslui,urziceni,199,80,142
+vaslui,iasi,199,226,92
+iasi,vaslui,226,199,92
+iasi,neamt,226,234,87
+neamt,iasi,234,226,87

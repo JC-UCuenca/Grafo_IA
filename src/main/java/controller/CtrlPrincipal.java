@@ -37,7 +37,7 @@ public class CtrlPrincipal implements ActionListener {
         view.getTxtInicio().setText("H");
         view.getTxtFin().setText("L");
         view.getChkCostoUni().setSelected(true);
-        grafo.cargarGrafo(".\\CSV_files\\ejemploBidireccional.csv");
+        grafo.cargarGrafo(".\\CSV_files\\ciudades.csv");
         this.fileLoad = true;
 
         JCheckBox chk;
@@ -64,7 +64,7 @@ public class CtrlPrincipal implements ActionListener {
             if (filePath != null) {
                 grafo.getNodos().clear();
                 grafo.cargarGrafo(filePath);
-                System.out.println(filePath);
+//                System.out.println(filePath);
                 view.getLblArchivo().setText(
                         filePath.substring(filePath.lastIndexOf("\\") + 1)
                 );
@@ -155,7 +155,7 @@ public class CtrlPrincipal implements ActionListener {
         HashMap<String, Integer> parameters = calculateComplexityParameters(inicio);
 
         for (String method : searchMethods()) {
-            System.out.println("Método: " + method + "\n");
+//            System.out.println("Método: " + method + "\n");
             if (method.isEmpty()) continue;
 
             long startTime = System.nanoTime();
@@ -263,10 +263,10 @@ public class CtrlPrincipal implements ActionListener {
 }
 
     private void addTableToPanel(ArrayList<String[]> data, int width) {
-        System.out.println("Data: ");
-        for (String[] row : data) {
-            System.out.println(Arrays.toString(row));
-        }
+//        System.out.println("Data: ");
+//        for (String[] row : data) {
+//            System.out.println(Arrays.toString(row));
+//        }
 
         JScrollPane scrollPane = new JScrollPane();
         JTable table = createTable(data);
@@ -339,7 +339,7 @@ public class CtrlPrincipal implements ActionListener {
             cola.addAll(hijos);
 
             view.getPanelGrafo().add(new Rectangulo(x, y, size, size));
-            System.out.println("Nodo: " + nodoActual.getNombre() + " Coordenadas: " + x + ", " + y);
+//            System.out.println("Nodo: " + nodoActual.getNombre() + " Coordenadas: " + x + ", " + y);
 
 
             JLabel label = new JLabel(nodoActual.getNombre());
@@ -358,7 +358,7 @@ public class CtrlPrincipal implements ActionListener {
                     Integer[] fin = new Integer[]{finalX, finalY};
                     view.getPanelGrafo().add(new Linea(inicio, fin,
                             view.getPanelGrafo().getWidth(), view.getPanelGrafo().getHeight()));
-                    System.out.println("Linea: " + Arrays.toString(inicio) +" " + Arrays.toString(fin));
+//                    System.out.println("Linea: " + Arrays.toString(inicio) +" " + Arrays.toString(fin));
                 });
                 children--;
             }
